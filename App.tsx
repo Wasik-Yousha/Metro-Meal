@@ -202,6 +202,20 @@ export function App() {
     )
   }
 
+  // Handle updating payment for a member
+  const handleUpdatePayment = (memberId: number, newTotal: number) => {
+    setMembers((prevMembers) =>
+      prevMembers.map((member) =>
+        member.id === memberId
+          ? {
+              ...member,
+              payments: newTotal,
+            }
+          : member,
+      ),
+    )
+  }
+
   // Handle adding an expense
   const handleAddExpense = (description: string, amount: number) => {
     const newExpense: Expense = {
@@ -211,6 +225,22 @@ export function App() {
       date: new Date().toISOString().split('T')[0],
     }
     setExpenses((prevExpenses) => [...prevExpenses, newExpense])
+  }
+
+  // Handle updating an expense
+  const handleUpdateExpense = (id: number, description: string, amount: number) => {
+    setExpenses((prevExpenses) =>
+      prevExpenses.map((expense) =>
+        expense.id === id
+          ? { ...expense, description, amount }
+          : expense
+      )
+    )
+  }
+
+  // Handle deleting an expense
+  const handleDeleteExpense = (id: number) => {
+    setExpenses((prevExpenses) => prevExpenses.filter((expense) => expense.id !== id))
   }
 
   // Handle toggling member active status
@@ -332,10 +362,19 @@ export function App() {
 
 
             {activeTab === 'payments' && (
-              <PaymentTracker members={members} onAddPayment={handleAddPayment} />
+              <PaymentTracker 
+                members={members} 
+                onAddPayment={handleAddPayment} 
+                onUpdatePayment={handleUpdatePayment}
+              />
             )}
             {activeTab === 'expenses' && (
-              <ExpenseTracker expenses={expenses} onAddExpense={handleAddExpense} />
+              <ExpenseTracker 
+                expenses={expenses} 
+                onAddExpense={handleAddExpense} 
+                onUpdateExpense={handleUpdateExpense}
+                onDeleteExpense={handleDeleteExpense}
+              />
             )}
             {activeTab === 'summary' && (
               <Summary

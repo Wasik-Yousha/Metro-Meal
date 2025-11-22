@@ -1,19 +1,28 @@
 import React, { useState } from 'react'
 import { Expense } from '../App'
-import { Plus, ShoppingBag, Receipt, Calendar } from 'lucide-react'
+import { Plus, ShoppingBag, Receipt, Calendar, Edit2, Trash2, Check, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface ExpenseTrackerProps {
   expenses: Expense[]
   onAddExpense: (description: string, amount: number) => void
+  onUpdateExpense: (id: number, description: string, amount: number) => void
+  onDeleteExpense: (id: number) => void
 }
 
 export const ExpenseTracker = ({
   expenses,
   onAddExpense,
+  onUpdateExpense,
+  onDeleteExpense,
 }: ExpenseTrackerProps) => {
   const [description, setDescription] = useState('')
   const [amount, setAmount] = useState('')
+
+  // Editing state
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editDescription, setEditDescription] = useState('')
+  const [editAmount, setEditAmount] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,6 +31,25 @@ export const ExpenseTracker = ({
       setDescription('')
       setAmount('')
     }
+  }
+
+  const startEditing = (expense: Expense) => {
+    setEditingId(expense.id)
+    setEditDescription(expense.description)
+    setEditAmount(expense.amount.toString())
+  }
+
+  const saveEdit = (id: number) => {
+    if (editDescription && editAmount) {
+      onUpdateExpense(id, editDescription, parseFloat(editAmount))
+      setEditingId(null)
+    }
+  }
+
+  const cancelEdit = () => {
+    setEditingId(null)
+    setEditDescription('')
+    setEditAmount('')
   }
 
   const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0)
@@ -105,21 +133,77 @@ export const ExpenseTracker = ({
                   transition={{ delay: index * 0.05 }}
                   className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-md transition-shadow"
                 >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400">
-                      <ShoppingBag className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-gray-900 dark:text-gray-100">{expense.description}</h3>
-                      <div className="flex items-center text-xs text-muted-foreground mt-1">
-                        <Calendar className="w-3 h-3 mr-1" />
-                        {expense.date}
+                  {editingId === expense.id ? (
+                    <div className="flex-1 flex items-center gap-3">
+                      <div className="flex-1 space-y-2">
+                        <input
+                          type="text"
+                          value={editDescription}
+                          onChange={(e) => setEditDescription(e.target.value)}
+                          className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-primary dark:bg-gray-700 dark:border-gray-600"
+                          placeholder="Description"
+                          autoFocus
+                        />
+                        <input
+                          type="number"
+                          min="0.01"
+                          step="0.01"
+                          value={editAmount}
+                          onChange={(e) => setEditAmount(e.target.value)}
+                          className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-primary dark:bg-gray-700 dark:border-gray-600"
+                          placeholder="Amount"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <button onClick={() => saveEdit(expense.id)} className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400">
+                          <Check size={16} />
+                        </button>
+                        <button onClick={cancelEdit} className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400">
+                          <X size={16} />
+                        </button>
                       </div>
                     </div>
-                  </div>
-                  <div className="font-bold text-lg text-red-600 dark:text-red-400">
-                    -{expense.amount.toFixed(2)} tk
-                  </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center space-x-4">
+                        <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600 dark:text-red-400">
+                          <ShoppingBag className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-gray-900 dark:text-gray-100">{expense.description}</h3>
+                          <div className="flex items-center text-xs text-muted-foreground mt-1">
+                            <Calendar className="w-3 h-3 mr-1" />
+                            {expense.date}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <div className="font-bold text-lg text-red-600 dark:text-red-400">
+                          -{expense.amount.toFixed(2)} tk
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <button 
+                            onClick={() => startEditing(expense)}
+                            className="p-2 text-gray-400 hover:text-primary hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                            title="Edit Expense"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                          <button 
+                            onClick={() => {
+                              if (window.confirm('Are you sure you want to delete this expense?')) {
+                                onDeleteExpense(expense.id)
+                              }
+                            }}
+                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                            title="Delete Expense"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </motion.div>
               ))
             ) : (

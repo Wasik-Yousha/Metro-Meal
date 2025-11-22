@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Member } from '../App'
-import { Plus, Wallet, CreditCard } from 'lucide-react'
+import { Plus, Wallet, CreditCard, Edit2, Check, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 const TakaSign = ({ className }: { className?: string }) => (
@@ -17,7 +17,6 @@ const TakaSign = ({ className }: { className?: string }) => (
     <path d="M16 11h-6a2 2 0 0 1 -2 -2v-6" />
     <path d="M11 17a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v2a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
     <line x1="16" y1="11" x2="16" y2="13" />
-    {/* Fallback to text if path is not perfect, but let's try to use a text-based SVG for Taka */}
     <text x="12" y="18" textAnchor="middle" fontSize="24" fontWeight="bold" stroke="none" fill="currentColor">৳</text>
   </svg>
 )
@@ -25,16 +24,38 @@ const TakaSign = ({ className }: { className?: string }) => (
 interface PaymentTrackerProps {
   members: Member[]
   onAddPayment: (memberId: number, amount: number) => void
+  onUpdatePayment: (memberId: number, newTotal: number) => void
 }
 
 export const PaymentTracker = ({
   members,
   onAddPayment,
+  onUpdatePayment,
 }: PaymentTrackerProps) => {
   const [payments, setPayments] = useState<{ [key: number]: number }>({})
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editTotal, setEditTotal] = useState<string>('')
 
   const handlePaymentChange = (memberId: number, amount: number) => {
     setPayments({ ...payments, [memberId]: amount })
+  }
+
+  const startEditing = (member: Member) => {
+    setEditingId(member.id)
+    setEditTotal(member.payments.toString())
+  }
+
+  const saveEdit = (memberId: number) => {
+    const newTotal = parseFloat(editTotal)
+    if (!isNaN(newTotal) && newTotal >= 0) {
+      onUpdatePayment(memberId, newTotal)
+      setEditingId(null)
+    }
+  }
+
+  const cancelEdit = () => {
+    setEditingId(null)
+    setEditTotal('')
   }
 
   const handleAddPayment = (memberId: number) => {
@@ -85,9 +106,38 @@ export const PaymentTracker = ({
               <div className="space-y-4">
                 <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900/50 rounded-lg">
                   <span className="text-sm text-muted-foreground">Total Paid</span>
-                  <span className="font-bold text-lg text-green-600 dark:text-green-400">
-                    {member.payments.toFixed(2)} tk
-                  </span>
+                  {editingId === member.id ? (
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={editTotal}
+                        onChange={(e) => setEditTotal(e.target.value)}
+                        className="w-24 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:border-primary bg-white dark:bg-gray-700 dark:border-gray-600"
+                        autoFocus
+                      />
+                      <button onClick={() => saveEdit(member.id)} className="text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 p-1 rounded">
+                        <Check size={16} />
+                      </button>
+                      <button onClick={cancelEdit} className="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-1 rounded">
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center space-x-2">
+                      <span className="font-bold text-lg text-green-600 dark:text-green-400">
+                        {member.payments.toFixed(2)} tk
+                      </span>
+                      <button 
+                        onClick={() => startEditing(member)}
+                        className="text-gray-400 hover:text-primary transition-colors p-1"
+                        title="Edit Total Payment"
+                      >
+                        <Edit2 size={14} />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center space-x-2">
