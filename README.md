@@ -2,7 +2,7 @@
 
 > **Smart Meal Management for the Modern Bachelor Mess.**
 
-**🔴 Live Demo:** [metro-meal.vercel.app](https://metro-meal.vercel.app/)
+** Live Demo:** [metro-meal.vercel.app](https://metro-meal.vercel.app/)
 
 Say goodbye to paper registers and messy calculations. **Metro Meal** is a beautiful, real-time dashboard designed to track meals, expenses, and payments effortlessly. Built for the **MetroBoys**, open for everyone.
 
