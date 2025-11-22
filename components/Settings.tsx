@@ -1,5 +1,5 @@
 import React from 'react'
-import { Settings as SettingsIcon, Save, Info, Quote } from 'lucide-react'
+import { Settings as SettingsIcon, Save, Info, Quote, Trash2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 interface SettingsProps {
@@ -7,6 +7,7 @@ interface SettingsProps {
   setRicePrice: (price: number) => void
   eggPrice: number
   setEggPrice: (price: number) => void
+  onClearData: () => void
 }
 
 export const Settings = ({
@@ -14,6 +15,7 @@ export const Settings = ({
   setRicePrice,
   eggPrice,
   setEggPrice,
+  onClearData,
 }: SettingsProps) => {
   return (
     <div className="space-y-6">
@@ -28,45 +30,63 @@ export const Settings = ({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700"
+            className="space-y-6"
           >
-            <h3 className="font-semibold text-lg mb-4">Unit Prices</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-1">
-                  Rice Price (per unit)
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    min="0"
-                    value={ricePrice}
-                    onChange={(e) => setRicePrice(parseFloat(e.target.value) || 0)}
-                    className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none"
-                  />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                    tk
-                  </span>
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
+              <h3 className="font-semibold text-lg mb-4">Unit Prices</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-muted-foreground mb-1">
+                    Rice Price (per unit)
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      min="0"
+                      value={ricePrice}
+                      onChange={(e) => setRicePrice(parseFloat(e.target.value) || 0)}
+                      className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none"
+                    />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                      tk
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-1">
-                  Egg Price (per unit)
-                </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    min="0"
-                    value={eggPrice}
-                    onChange={(e) => setEggPrice(parseFloat(e.target.value) || 0)}
-                    className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none"
-                  />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                    tk
-                  </span>
+                <div>
+                  <label className="block text-sm font-medium text-muted-foreground mb-1">
+                    Egg Price (per unit)
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      min="0"
+                      value={eggPrice}
+                      onChange={(e) => setEggPrice(parseFloat(e.target.value) || 0)}
+                      className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary outline-none"
+                    />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                      tk
+                    </span>
+                  </div>
                 </div>
               </div>
+            </div>
+
+            <div className="bg-red-50 dark:bg-red-900/20 p-6 rounded-xl border border-red-100 dark:border-red-800">
+              <h3 className="font-semibold text-lg mb-2 text-red-800 dark:text-red-300 flex items-center">
+                <Trash2 className="w-5 h-5 mr-2" />
+                Factory Reset
+              </h3>
+              <p className="text-sm text-red-600 dark:text-red-400 mb-4">
+                Wipe all data from this device. This includes members, expenses, and settings.
+              </p>
+              <button
+                onClick={onClearData}
+                className="w-full py-2 px-4 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium"
+              >
+                Reset Everything
+              </button>
             </div>
           </motion.div>
 

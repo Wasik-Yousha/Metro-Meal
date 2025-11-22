@@ -257,6 +257,28 @@ export function App() {
     setMembers((prevMembers) => prevMembers.filter((member) => member.id !== memberId))
   }
 
+  // Handle clearing all data
+  const handleClearData = () => {
+    if (window.confirm('Are you sure you want to perform a Factory Reset? This will delete ALL data including members, expenses, and settings. This action cannot be undone.')) {
+      // Clear local storage
+      localStorage.clear()
+      
+      // Reset state to defaults
+      setExpenses([])
+      setMembers([
+        { id: 1, name: 'Member 1', meals: 0, riceCount: 0, eggCount: 0, payments: 0, isActive: true },
+        { id: 2, name: 'Member 2', meals: 0, riceCount: 0, eggCount: 0, payments: 0, isActive: true },
+        { id: 3, name: 'Member 3', meals: 0, riceCount: 0, eggCount: 0, payments: 0, isActive: true },
+        { id: 4, name: 'Member 4', meals: 0, riceCount: 0, eggCount: 0, payments: 0, isActive: true },
+        { id: 5, name: 'Member 5', meals: 0, riceCount: 0, eggCount: 0, payments: 0, isActive: true },
+      ])
+      setRicePrice(20)
+      setEggPrice(15)
+      
+      window.location.reload() // Reload to ensure a fresh state
+    }
+  }
+
   const tabs = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'members', label: 'Meals', icon: Users },
@@ -335,6 +357,7 @@ export function App() {
                 setRicePrice={setRicePrice}
                 eggPrice={eggPrice}
                 setEggPrice={setEggPrice}
+                onClearData={handleClearData}
               />
             )}
           </motion.div>
