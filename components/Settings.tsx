@@ -117,7 +117,7 @@ export const Settings = ({
               <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
                 Metro Meal is a simple, smart tool designed to help bachelor messes manage their daily meal tracking and expenses without the hassle of paper registers. It automatically calculates meal rates, individual costs, and balances, keeping everything transparent and easy.
               </p>
-              <div className="relative pl-4 italic text-sm text-muted-foreground">
+              <div className="relative pl-4 italic text-sm text-blue-600 dark:text-blue-400">
                 <Quote className="w-4 h-4 absolute -top-2 -left-2 text-primary/20" />
                 "A small initiative to make your Bachelor life Easy"
                 <span className="block mt-1 font-medium text-primary not-italic text-xs">— Wasik Yousha</span>
