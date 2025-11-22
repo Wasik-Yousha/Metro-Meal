@@ -1,7 +1,9 @@
 import React from 'react'
 import { Member, Expense } from '../App'
-import { Calculator, TrendingUp, TrendingDown, AlertCircle, Utensils, Egg } from 'lucide-react'
+import { Calculator, TrendingUp, TrendingDown, AlertCircle, Utensils, Egg, Download } from 'lucide-react'
 import { motion } from 'framer-motion'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 
 const TakaSign = ({ className }: { className?: string }) => (
   <svg 
@@ -48,12 +50,81 @@ export const Summary = ({
   const totalEggCost = totalEggs * eggPrice
   const groupBalance = totalPayments - totalExpenses
 
+  const generatePDF = () => {
+    const doc = new jsPDF()
+
+    // Title
+    doc.setFontSize(20)
+    doc.setTextColor(79, 70, 229) // Indigo color
+    doc.text('Metro Meal - Monthly Summary', 14, 22)
+    
+    // Date
+    doc.setFontSize(10)
+    doc.setTextColor(100)
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 30)
+
+    // Summary Metrics
+    doc.setFontSize(12)
+    doc.setTextColor(0)
+    doc.text(`Total Meals: ${totalMeals}`, 14, 45)
+    doc.text(`Total Payments: ${totalPayments.toFixed(2)} tk`, 14, 52)
+    doc.text(`Total Expenses: ${totalExpenses.toFixed(2)} tk`, 14, 59)
+    doc.text(`Meal Rate: ${mealRate.toFixed(2)} tk`, 14, 66)
+    
+    const balanceText = `Group Balance: ${Math.abs(groupBalance).toFixed(2)} tk ${groupBalance >= 0 ? '(Surplus)' : '(Deficit)'}`
+    doc.text(balanceText, 14, 73)
+
+    // Table Data
+    const tableData = members.map(member => {
+      const mealCost = member.meals * mealRate
+      const riceCost = member.riceCount * ricePrice
+      const eggCost = member.eggCount * eggPrice
+      const extraCost = riceCost + eggCost
+      const totalCost = mealCost + extraCost
+      const balance = member.payments - totalCost
+      
+      return [
+        member.name,
+        member.meals,
+        member.riceCount,
+        member.eggCount,
+        mealCost.toFixed(2),
+        extraCost.toFixed(2),
+        totalCost.toFixed(2),
+        member.payments.toFixed(2),
+        `${Math.abs(balance).toFixed(2)} ${balance >= 0 ? 'Cr' : 'Dr'}`
+      ]
+    })
+
+    autoTable(doc, {
+      startY: 85,
+      head: [['Name', 'Meals', 'Rice', 'Eggs', 'Meal Cost', 'Extra', 'Total', 'Paid', 'Balance']],
+      body: tableData,
+      theme: 'grid',
+      headStyles: { fillColor: [79, 70, 229] },
+      styles: { fontSize: 8, cellPadding: 2 },
+      foot: [['', '', '', '', '', '', 'Total', totalPayments.toFixed(2), '']],
+      footStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' }
+    })
+
+    doc.save('metro-meal-summary.pdf')
+  }
+
   return (
     <div className="space-y-6">
       <div className="glass-panel rounded-xl p-6">
-        <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-purple-500 to-indigo-600 bg-clip-text text-transparent">
-          Monthly Summary
-        </h2>
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-500 to-indigo-600 bg-clip-text text-transparent">
+            Monthly Summary
+          </h2>
+          <button
+            onClick={generatePDF}
+            className="flex items-center justify-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors text-sm font-medium shadow-sm"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Download Report
+          </button>
+        </div>
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
