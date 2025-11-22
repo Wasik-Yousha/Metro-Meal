@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Users, CreditCard, Receipt, PieChart, LayoutDashboard } from 'lucide-react'
+import { Users, CreditCard, Receipt, PieChart, LayoutDashboard, Settings as SettingsIcon } from 'lucide-react'
 import { MembersList } from './components/MembersList'
 import { PaymentTracker } from './components/PaymentTracker'
 import { ExpenseTracker } from './components/ExpenseTracker'
 import { Summary } from './components/Summary'
 import { Dashboard } from './components/Dashboard'
 import { Header } from './components/Header'
-
-// Constants for extra item prices
-export const RICE_PRICE = 20 // taka
-export const EGG_PRICE = 15 // taka
+import { Settings } from './components/Settings'
 
 export interface Member {
   id: number
@@ -97,6 +94,16 @@ export function App() {
     return savedExpenses ? JSON.parse(savedExpenses) : []
   })
 
+  const [ricePrice, setRicePrice] = useState<number>(() => {
+    const saved = localStorage.getItem('ricePrice')
+    return saved ? parseFloat(saved) : 20
+  })
+
+  const [eggPrice, setEggPrice] = useState<number>(() => {
+    const saved = localStorage.getItem('eggPrice')
+    return saved ? parseFloat(saved) : 15
+  })
+
   // Save to localStorage whenever members or expenses change
   useEffect(() => {
     localStorage.setItem('members', JSON.stringify(members))
@@ -106,8 +113,16 @@ export function App() {
     localStorage.setItem('expenses', JSON.stringify(expenses))
   }, [expenses])
 
+  useEffect(() => {
+    localStorage.setItem('ricePrice', ricePrice.toString())
+  }, [ricePrice])
+
+  useEffect(() => {
+    localStorage.setItem('eggPrice', eggPrice.toString())
+  }, [eggPrice])
+
   const [activeTab, setActiveTab] = useState<
-    'dashboard' | 'members' | 'payments' | 'expenses' | 'summary'
+    'dashboard' | 'members' | 'payments' | 'expenses' | 'summary' | 'settings'
   >('dashboard')
 
   // Calculate total meals, payments, and expenses
@@ -124,8 +139,8 @@ export function App() {
   )
 
   // Calculate extra costs
-  const riceCost = totalRice * RICE_PRICE
-  const eggCost = totalEggs * EGG_PRICE
+  const riceCost = totalRice * ricePrice
+  const eggCost = totalEggs * eggPrice
 
   // Calculate meal rate (excluding rice and egg costs)
   const baseExpenses = totalExpenses - riceCost - eggCost
@@ -288,8 +303,8 @@ export function App() {
                 onUpdateName={handleUpdateName}
                 onAddMember={handleAddMember}
                 onRemoveMember={handleRemoveMember}
-                ricePrice={RICE_PRICE}
-                eggPrice={EGG_PRICE}
+                ricePrice={ricePrice}
+                eggPrice={eggPrice}
               />
             )}
 
@@ -310,8 +325,16 @@ export function App() {
                 totalPayments={totalPayments}
                 totalExpenses={totalExpenses}
                 mealRate={mealRate}
-                ricePrice={RICE_PRICE}
-                eggPrice={EGG_PRICE}
+                ricePrice={ricePrice}
+                eggPrice={eggPrice}
+              />
+            )}
+            {activeTab === 'settings' && (
+              <Settings
+                ricePrice={ricePrice}
+                setRicePrice={setRicePrice}
+                eggPrice={eggPrice}
+                setEggPrice={setEggPrice}
               />
             )}
           </motion.div>

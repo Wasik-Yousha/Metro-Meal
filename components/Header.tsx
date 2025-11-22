@@ -1,5 +1,5 @@
 import React from 'react'
-import { Utensils, Moon, Sun } from 'lucide-react'
+import { Utensils, Moon, Sun, Settings } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { MetroBoysLogo } from './MetroBoysLogo'
 
@@ -31,7 +31,7 @@ export const Header = ({ isDarkMode, toggleTheme, activeTab, setActiveTab, tabs 
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-1">
-          {tabs.map((tab) => {
+          {tabs.filter(tab => tab.id !== 'settings').map((tab) => {
             const Icon = tab.icon
             const isActive = activeTab === tab.id
             return (
@@ -51,24 +51,37 @@ export const Header = ({ isDarkMode, toggleTheme, activeTab, setActiveTab, tabs 
           })}
         </nav>
         
-        <button
-          onClick={toggleTheme}
-          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative overflow-hidden"
-          aria-label="Toggle theme"
-
-        >
-          <motion.div
-            initial={false}
-            animate={{ rotate: isDarkMode ? 0 : 180 }}
-            transition={{ duration: 0.5, type: "spring" }}
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={() => setActiveTab('settings')}
+            className={`p-2 rounded-full transition-colors ${
+              activeTab === 'settings' 
+                ? 'bg-primary/10 text-primary' 
+                : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-muted-foreground'
+            }`}
+            aria-label="Settings"
           >
-            {isDarkMode ? (
-              <Moon className="w-5 h-5 text-blue-400" />
-            ) : (
-              <Sun className="w-5 h-5 text-orange-500" />
-            )}
-          </motion.div>
-        </button>
+            <Settings className="w-5 h-5" />
+          </button>
+
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors relative overflow-hidden"
+            aria-label="Toggle theme"
+          >
+            <motion.div
+              initial={false}
+              animate={{ rotate: isDarkMode ? 0 : 180 }}
+              transition={{ duration: 0.5, type: "spring" }}
+            >
+              {isDarkMode ? (
+                <Moon className="w-5 h-5 text-blue-400" />
+              ) : (
+                <Sun className="w-5 h-5 text-orange-500" />
+              )}
+            </motion.div>
+          </button>
+        </div>
       </div>
     </header>
   )
