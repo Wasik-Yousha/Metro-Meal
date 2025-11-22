@@ -6,13 +6,13 @@ Say goodbye to paper registers and messy calculations. **Metro Meal** is a beaut
 
 ##  Features
 
-- ** Interactive Dashboard:** Real-time insights into meal rates, group balance, and spending trends.
-- ** Member Management:** Add, remove, or toggle members with a single click.
-- ** Granular Tracking:** Track Meals, Rice, and Eggs individually per member.
-- ** Expense & Payment Tracker:** Log every Taka (৳) spent and received. Auto-calculates surplus/deficit.
-- ** Dark Mode:** Sleek UI that looks great day or night.
-- ** Local Persistence:** Data stays safe in your browser—no server setup required.
-- ** Mobile First:** Fully responsive design for tracking on the go.
+- Interactive Dashboard:** Real-time insights into meal rates, group balance, and spending trends.
+- Member Management:** Add, remove, or toggle members with a single click.
+- Granular Tracking:** Track Meals, Rice, and Eggs individually per member.
+- Expense & Payment Tracker:** Log every Taka (৳) spent and received. Auto-calculates surplus/deficit.
+- Dark Mode:** Sleek UI that looks great day or night.
+- Local Persistence:** Data stays safe in your browser—no server setup required.
+- Mobile First:** Fully responsive design for tracking on the go.
 
 ## 🛠️ Tech Stack
 
