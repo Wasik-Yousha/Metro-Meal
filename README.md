@@ -4,15 +4,15 @@
 
 Say goodbye to paper registers and messy calculations. **Metro Meal** is a beautiful, real-time dashboard designed to track meals, expenses, and payments effortlessly. Built for the **MetroBoys**, open for everyone.
 
-## ✨ Features
+##  Features
 
-- **📊 Interactive Dashboard:** Real-time insights into meal rates, group balance, and spending trends.
-- **👥 Member Management:** Add, remove, or toggle members with a single click.
-- **🍛 Granular Tracking:** Track Meals, Rice, and Eggs individually per member.
-- **💰 Expense & Payment Tracker:** Log every Taka (৳) spent and received. Auto-calculates surplus/deficit.
-- **🌓 Dark Mode:** Sleek UI that looks great day or night.
-- **💾 Local Persistence:** Data stays safe in your browser—no server setup required.
-- **📱 Mobile First:** Fully responsive design for tracking on the go.
+- ** Interactive Dashboard:** Real-time insights into meal rates, group balance, and spending trends.
+- ** Member Management:** Add, remove, or toggle members with a single click.
+- ** Granular Tracking:** Track Meals, Rice, and Eggs individually per member.
+- ** Expense & Payment Tracker:** Log every Taka (৳) spent and received. Auto-calculates surplus/deficit.
+- ** Dark Mode:** Sleek UI that looks great day or night.
+- ** Local Persistence:** Data stays safe in your browser—no server setup required.
+- ** Mobile First:** Fully responsive design for tracking on the go.
 
 ## 🛠️ Tech Stack
 
@@ -22,7 +22,7 @@ Say goodbye to paper registers and messy calculations. **Metro Meal** is a beaut
 - **Icons:** Lucide React
 - **Build Tool:** Parcel
 
-## 🚀 Quick Start
+##  Quick Start
 
 1. **Clone the repo**
    ```bash
