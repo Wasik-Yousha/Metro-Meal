@@ -246,13 +246,15 @@ export const MembersList = ({
                       <span className="text-sm font-medium">Meals: {member.meals}</span>
                     </div>
                     <div className="flex items-center space-x-2">
+                      <span className="text-sm font-bold w-4 text-center">{mealCounts[member.id] || 0}</span>
                       <input
-                        type="number"
+                        type="range"
                         min="0"
-                        value={mealCounts[member.id] || ''}
+                        max="9"
+                        step="1"
+                        value={mealCounts[member.id] || 0}
                         onChange={(e) => handleMealCountChange(member.id, parseInt(e.target.value) || 0)}
-                        className="w-14 h-10 text-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-base focus:ring-2 focus:ring-primary outline-none"
-                        placeholder="0"
+                        className="w-24 accent-primary cursor-pointer"
                         disabled={!member.isActive}
                       />
                       <button
@@ -272,13 +274,15 @@ export const MembersList = ({
                       <span className="text-sm font-medium">Rice: {member.riceCount}</span>
                     </div>
                     <div className="flex items-center space-x-2">
+                      <span className="text-sm font-bold w-4 text-center">{riceCounts[member.id] || 0}</span>
                       <input
-                        type="number"
+                        type="range"
                         min="0"
-                        value={riceCounts[member.id] || ''}
+                        max="9"
+                        step="1"
+                        value={riceCounts[member.id] || 0}
                         onChange={(e) => handleRiceCountChange(member.id, parseInt(e.target.value) || 0)}
-                        className="w-14 h-10 text-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-base focus:ring-2 focus:ring-primary outline-none"
-                        placeholder="0"
+                        className="w-24 accent-primary cursor-pointer"
                         disabled={!member.isActive}
                       />
                       <button
@@ -298,13 +302,15 @@ export const MembersList = ({
                       <span className="text-sm font-medium">Eggs: {member.eggCount}</span>
                     </div>
                     <div className="flex items-center space-x-2">
+                      <span className="text-sm font-bold w-4 text-center">{eggCounts[member.id] || 0}</span>
                       <input
-                        type="number"
+                        type="range"
                         min="0"
-                        value={eggCounts[member.id] || ''}
+                        max="9"
+                        step="1"
+                        value={eggCounts[member.id] || 0}
                         onChange={(e) => handleEggCountChange(member.id, parseInt(e.target.value) || 0)}
-                        className="w-14 h-10 text-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-base focus:ring-2 focus:ring-primary outline-none"
-                        placeholder="0"
+                        className="w-24 accent-primary cursor-pointer"
                         disabled={!member.isActive}
                       />
                       <button
