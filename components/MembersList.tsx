@@ -8,6 +8,9 @@ interface MembersListProps {
   onAddMeal: (memberId: number, mealCount: number) => void
   onAddRice: (memberId: number, count: number) => void
   onAddEgg: (memberId: number, count: number) => void
+  onUpdateMeals: (memberId: number, newMeals: number) => void
+  onUpdateRice: (memberId: number, newRice: number) => void
+  onUpdateEggs: (memberId: number, newEggs: number) => void
   onToggleActive: (memberId: number) => void
   onUpdateName: (memberId: number, newName: string) => void
   onAddMember: (name: string) => void
@@ -20,6 +23,9 @@ export const MembersList = ({
   onAddMeal,
   onAddRice,
   onAddEgg,
+  onUpdateMeals,
+  onUpdateRice,
+  onUpdateEggs,
   onToggleActive,
   onUpdateName,
   onAddMember,
@@ -37,9 +43,22 @@ export const MembersList = ({
     [key: number]: number
   }>({})
   
+  // State for confirmed animation
+  const [confirmedMeal, setConfirmedMeal] = useState<{ [key: number]: boolean }>({})
+  const [confirmedRice, setConfirmedRice] = useState<{ [key: number]: boolean }>({})
+  const [confirmedEgg, setConfirmedEgg] = useState<{ [key: number]: boolean }>({})
+  
   // State for editing names
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editName, setEditName] = useState('')
+  
+  // State for editing counts
+  const [editingMealId, setEditingMealId] = useState<number | null>(null)
+  const [editingRiceId, setEditingRiceId] = useState<number | null>(null)
+  const [editingEggId, setEditingEggId] = useState<number | null>(null)
+  const [editMealValue, setEditMealValue] = useState(0)
+  const [editRiceValue, setEditRiceValue] = useState(0)
+  const [editEggValue, setEditEggValue] = useState(0)
   
   // State for adding new member
   const [isAddingMember, setIsAddingMember] = useState(false)
@@ -88,31 +107,83 @@ export const MembersList = ({
     const count = mealCounts[memberId] || 0
     if (count > 0) {
       onAddMeal(memberId, count)
-      setMealCounts({
-        ...mealCounts,
-        [memberId]: 0,
-      })
+      // Show green confirmation
+      setConfirmedMeal({ ...confirmedMeal, [memberId]: true })
+      setTimeout(() => {
+        setConfirmedMeal({ ...confirmedMeal, [memberId]: false })
+        setMealCounts({
+          ...mealCounts,
+          [memberId]: 0,
+        })
+      }, 300)
     }
   }
   const handleAddRice = (memberId: number) => {
     const count = riceCounts[memberId] || 0
     if (count > 0) {
       onAddRice(memberId, count)
-      setRiceCounts({
-        ...riceCounts,
-        [memberId]: 0,
-      })
+      // Show green confirmation
+      setConfirmedRice({ ...confirmedRice, [memberId]: true })
+      setTimeout(() => {
+        setConfirmedRice({ ...confirmedRice, [memberId]: false })
+        setRiceCounts({
+          ...riceCounts,
+          [memberId]: 0,
+        })
+      }, 300)
     }
   }
   const handleAddEgg = (memberId: number) => {
     const count = eggCounts[memberId] || 0
     if (count > 0) {
       onAddEgg(memberId, count)
-      setEggCounts({
-        ...eggCounts,
-        [memberId]: 0,
-      })
+      // Show green confirmation
+      setConfirmedEgg({ ...confirmedEgg, [memberId]: true })
+      setTimeout(() => {
+        setConfirmedEgg({ ...confirmedEgg, [memberId]: false })
+        setEggCounts({
+          ...eggCounts,
+          [memberId]: 0,
+        })
+      }, 300)
     }
+  }
+
+  // Get tick button style based on state
+  const getTickStyle = (count: number, confirmed: boolean) => {
+    if (confirmed) {
+      return 'bg-green-500 text-white'
+    }
+    if (count > 0) {
+      return 'bg-white dark:bg-gray-200 text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-300 border border-gray-300'
+    }
+    return 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+  }
+
+  // Edit handlers
+  const startEditMeal = (member: Member) => {
+    setEditingMealId(member.id)
+    setEditMealValue(member.meals)
+  }
+  const startEditRice = (member: Member) => {
+    setEditingRiceId(member.id)
+    setEditRiceValue(member.riceCount)
+  }
+  const startEditEgg = (member: Member) => {
+    setEditingEggId(member.id)
+    setEditEggValue(member.eggCount)
+  }
+  const saveMealEdit = (memberId: number) => {
+    onUpdateMeals(memberId, editMealValue)
+    setEditingMealId(null)
+  }
+  const saveRiceEdit = (memberId: number) => {
+    onUpdateRice(memberId, editRiceValue)
+    setEditingRiceId(null)
+  }
+  const saveEggEdit = (memberId: number) => {
+    onUpdateEggs(memberId, editEggValue)
+    setEditingEggId(null)
   }
 
   return (
@@ -241,9 +312,36 @@ export const MembersList = ({
                 <div className={`space-y-4 transition-opacity duration-300 ${!member.isActive ? 'pointer-events-none opacity-50' : ''}`}>
                   {/* Meals */}
                   <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-900/50 p-3 rounded-lg">
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-3 group">
                       <Utensils className="w-5 h-5 text-orange-500" />
-                      <span className="text-sm font-medium">Meals: {member.meals}</span>
+                      {editingMealId === member.id ? (
+                        <div className="flex items-center space-x-1">
+                          <input
+                            type="number"
+                            min="0"
+                            value={editMealValue}
+                            onChange={(e) => setEditMealValue(Math.max(0, parseInt(e.target.value) || 0))}
+                            className="w-16 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-2 py-0.5 text-sm"
+                            autoFocus
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') saveMealEdit(member.id)
+                              if (e.key === 'Escape') setEditingMealId(null)
+                            }}
+                          />
+                          <button onClick={() => saveMealEdit(member.id)} className="text-green-500 p-1"><Check size={14}/></button>
+                          <button onClick={() => setEditingMealId(null)} className="text-red-500 p-1"><X size={14}/></button>
+                        </div>
+                      ) : (
+                        <>
+                          <span className="text-sm font-medium">Meals: {member.meals}</span>
+                          <button 
+                            onClick={() => startEditMeal(member)}
+                            className="text-muted-foreground hover:text-primary transition-colors opacity-0 group-hover:opacity-100"
+                          >
+                            <Edit2 size={12} />
+                          </button>
+                        </>
+                      )}
                     </div>
                     <div className="flex items-center space-x-1">
                       <button
@@ -261,10 +359,11 @@ export const MembersList = ({
                       >
                         <Plus className="w-4 h-4" />
                       </button>
+                      <div className="w-4" /> {/* Spacer */}
                       <button
                         onClick={() => handleAddMeal(member.id)}
                         disabled={!mealCounts[member.id] || !member.isActive}
-                        className={`ml-3 p-2 rounded-lg transition-colors active:scale-95 ${mealCounts[member.id] ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'}`}
+                        className={`p-2 rounded-lg transition-all active:scale-95 ${getTickStyle(mealCounts[member.id] || 0, confirmedMeal[member.id] || false)}`}
                         title="Confirm"
                       >
                         <Check className="w-4 h-4" />
@@ -274,9 +373,36 @@ export const MembersList = ({
 
                   {/* Rice */}
                   <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-900/50 p-3 rounded-lg">
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-3 group">
                       <div className="w-5 h-5 rounded-full border-2 border-gray-400" />
-                      <span className="text-sm font-medium">Rice: {member.riceCount}</span>
+                      {editingRiceId === member.id ? (
+                        <div className="flex items-center space-x-1">
+                          <input
+                            type="number"
+                            min="0"
+                            value={editRiceValue}
+                            onChange={(e) => setEditRiceValue(Math.max(0, parseInt(e.target.value) || 0))}
+                            className="w-16 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-2 py-0.5 text-sm"
+                            autoFocus
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') saveRiceEdit(member.id)
+                              if (e.key === 'Escape') setEditingRiceId(null)
+                            }}
+                          />
+                          <button onClick={() => saveRiceEdit(member.id)} className="text-green-500 p-1"><Check size={14}/></button>
+                          <button onClick={() => setEditingRiceId(null)} className="text-red-500 p-1"><X size={14}/></button>
+                        </div>
+                      ) : (
+                        <>
+                          <span className="text-sm font-medium">Rice: {member.riceCount}</span>
+                          <button 
+                            onClick={() => startEditRice(member)}
+                            className="text-muted-foreground hover:text-primary transition-colors opacity-0 group-hover:opacity-100"
+                          >
+                            <Edit2 size={12} />
+                          </button>
+                        </>
+                      )}
                     </div>
                     <div className="flex items-center space-x-1">
                       <button
@@ -294,10 +420,11 @@ export const MembersList = ({
                       >
                         <Plus className="w-4 h-4" />
                       </button>
+                      <div className="w-4" /> {/* Spacer */}
                       <button
                         onClick={() => handleAddRice(member.id)}
                         disabled={!riceCounts[member.id] || !member.isActive}
-                        className={`ml-3 p-2 rounded-lg transition-colors active:scale-95 ${riceCounts[member.id] ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'}`}
+                        className={`p-2 rounded-lg transition-all active:scale-95 ${getTickStyle(riceCounts[member.id] || 0, confirmedRice[member.id] || false)}`}
                         title="Confirm"
                       >
                         <Check className="w-4 h-4" />
@@ -307,9 +434,36 @@ export const MembersList = ({
 
                   {/* Eggs */}
                   <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-900/50 p-3 rounded-lg">
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-3 group">
                       <Egg className="w-5 h-5 text-yellow-500" />
-                      <span className="text-sm font-medium">Eggs: {member.eggCount}</span>
+                      {editingEggId === member.id ? (
+                        <div className="flex items-center space-x-1">
+                          <input
+                            type="number"
+                            min="0"
+                            value={editEggValue}
+                            onChange={(e) => setEditEggValue(Math.max(0, parseInt(e.target.value) || 0))}
+                            className="w-16 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded px-2 py-0.5 text-sm"
+                            autoFocus
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') saveEggEdit(member.id)
+                              if (e.key === 'Escape') setEditingEggId(null)
+                            }}
+                          />
+                          <button onClick={() => saveEggEdit(member.id)} className="text-green-500 p-1"><Check size={14}/></button>
+                          <button onClick={() => setEditingEggId(null)} className="text-red-500 p-1"><X size={14}/></button>
+                        </div>
+                      ) : (
+                        <>
+                          <span className="text-sm font-medium">Eggs: {member.eggCount}</span>
+                          <button 
+                            onClick={() => startEditEgg(member)}
+                            className="text-muted-foreground hover:text-primary transition-colors opacity-0 group-hover:opacity-100"
+                          >
+                            <Edit2 size={12} />
+                          </button>
+                        </>
+                      )}
                     </div>
                     <div className="flex items-center space-x-1">
                       <button
@@ -327,10 +481,11 @@ export const MembersList = ({
                       >
                         <Plus className="w-4 h-4" />
                       </button>
+                      <div className="w-4" /> {/* Spacer */}
                       <button
                         onClick={() => handleAddEgg(member.id)}
                         disabled={!eggCounts[member.id] || !member.isActive}
-                        className={`ml-3 p-2 rounded-lg transition-colors active:scale-95 ${eggCounts[member.id] ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'}`}
+                        className={`p-2 rounded-lg transition-all active:scale-95 ${getTickStyle(eggCounts[member.id] || 0, confirmedEgg[member.id] || false)}`}
                         title="Confirm"
                       >
                         <Check className="w-4 h-4" />

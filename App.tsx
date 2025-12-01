@@ -188,6 +188,39 @@ export function App() {
     )
   }
 
+  // Handle updating meals for a member (direct set)
+  const handleUpdateMeals = (memberId: number, newMeals: number) => {
+    setMembers((prevMembers) =>
+      prevMembers.map((member) =>
+        member.id === memberId
+          ? { ...member, meals: newMeals }
+          : member,
+      ),
+    )
+  }
+
+  // Handle updating rice for a member (direct set)
+  const handleUpdateRice = (memberId: number, newRice: number) => {
+    setMembers((prevMembers) =>
+      prevMembers.map((member) =>
+        member.id === memberId
+          ? { ...member, riceCount: newRice }
+          : member,
+      ),
+    )
+  }
+
+  // Handle updating eggs for a member (direct set)
+  const handleUpdateEggs = (memberId: number, newEggs: number) => {
+    setMembers((prevMembers) =>
+      prevMembers.map((member) =>
+        member.id === memberId
+          ? { ...member, eggCount: newEggs }
+          : member,
+      ),
+    )
+  }
+
   // Handle adding payment from a member
   const handleAddPayment = (memberId: number, amount: number) => {
     setMembers((prevMembers) =>
@@ -351,6 +384,9 @@ export function App() {
                 onAddMeal={handleAddMeal}
                 onAddRice={handleAddRice}
                 onAddEgg={handleAddEgg}
+                onUpdateMeals={handleUpdateMeals}
+                onUpdateRice={handleUpdateRice}
+                onUpdateEggs={handleUpdateEggs}
                 onToggleActive={handleToggleActive}
                 onUpdateName={handleUpdateName}
                 onAddMember={handleAddMember}
