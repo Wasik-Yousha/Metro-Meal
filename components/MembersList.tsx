@@ -264,7 +264,7 @@ export const MembersList = ({
                       <button
                         onClick={() => handleAddMeal(member.id)}
                         disabled={!mealCounts[member.id] || !member.isActive}
-                        className="ml-2 p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors active:scale-95"
+                        className={`ml-3 p-2 rounded-lg transition-colors active:scale-95 ${mealCounts[member.id] ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'}`}
                         title="Confirm"
                       >
                         <Check className="w-4 h-4" />
@@ -297,7 +297,7 @@ export const MembersList = ({
                       <button
                         onClick={() => handleAddRice(member.id)}
                         disabled={!riceCounts[member.id] || !member.isActive}
-                        className="ml-2 p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors active:scale-95"
+                        className={`ml-3 p-2 rounded-lg transition-colors active:scale-95 ${riceCounts[member.id] ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'}`}
                         title="Confirm"
                       >
                         <Check className="w-4 h-4" />
@@ -330,7 +330,7 @@ export const MembersList = ({
                       <button
                         onClick={() => handleAddEgg(member.id)}
                         disabled={!eggCounts[member.id] || !member.isActive}
-                        className="ml-2 p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors active:scale-95"
+                        className={`ml-3 p-2 rounded-lg transition-colors active:scale-95 ${eggCounts[member.id] ? 'bg-green-500 text-white hover:bg-green-600' : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'}`}
                         title="Confirm"
                       >
                         <Check className="w-4 h-4" />
