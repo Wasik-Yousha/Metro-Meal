@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Member } from '../App'
-import { Plus, Utensils, Egg, Edit2, Check, X, Power, Trash2, UserPlus } from 'lucide-react'
+import { Minus, Plus, Utensils, Egg, Edit2, Check, X, Power, Trash2, UserPlus } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface MembersListProps {
@@ -245,24 +245,29 @@ export const MembersList = ({
                       <Utensils className="w-5 h-5 text-orange-500" />
                       <span className="text-sm font-medium">Meals: {member.meals}</span>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm font-bold w-4 text-center">{mealCounts[member.id] || 0}</span>
-                      <input
-                        type="range"
-                        min="0"
-                        max="9"
-                        step="1"
-                        value={mealCounts[member.id] || 0}
-                        onChange={(e) => handleMealCountChange(member.id, parseInt(e.target.value) || 0)}
-                        className="w-24 accent-primary cursor-pointer"
-                        disabled={!member.isActive}
-                      />
+                    <div className="flex items-center space-x-1">
+                      <button
+                        onClick={() => handleMealCountChange(member.id, Math.max(0, (mealCounts[member.id] || 0) - 1))}
+                        disabled={!member.isActive || (mealCounts[member.id] || 0) <= 0}
+                        className="p-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors active:scale-95"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <span className="text-sm font-bold w-8 text-center">{mealCounts[member.id] || 0}</span>
+                      <button
+                        onClick={() => handleMealCountChange(member.id, Math.min(9, (mealCounts[member.id] || 0) + 1))}
+                        disabled={!member.isActive || (mealCounts[member.id] || 0) >= 9}
+                        className="p-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors active:scale-95"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
                       <button
                         onClick={() => handleAddMeal(member.id)}
                         disabled={!mealCounts[member.id] || !member.isActive}
-                        className="p-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95"
+                        className="ml-2 p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors active:scale-95"
+                        title="Confirm"
                       >
-                        <Plus className="w-5 h-5" />
+                        <Check className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
@@ -273,24 +278,29 @@ export const MembersList = ({
                       <div className="w-5 h-5 rounded-full border-2 border-gray-400" />
                       <span className="text-sm font-medium">Rice: {member.riceCount}</span>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm font-bold w-4 text-center">{riceCounts[member.id] || 0}</span>
-                      <input
-                        type="range"
-                        min="0"
-                        max="9"
-                        step="1"
-                        value={riceCounts[member.id] || 0}
-                        onChange={(e) => handleRiceCountChange(member.id, parseInt(e.target.value) || 0)}
-                        className="w-24 accent-primary cursor-pointer"
-                        disabled={!member.isActive}
-                      />
+                    <div className="flex items-center space-x-1">
+                      <button
+                        onClick={() => handleRiceCountChange(member.id, Math.max(0, (riceCounts[member.id] || 0) - 1))}
+                        disabled={!member.isActive || (riceCounts[member.id] || 0) <= 0}
+                        className="p-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors active:scale-95"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <span className="text-sm font-bold w-8 text-center">{riceCounts[member.id] || 0}</span>
+                      <button
+                        onClick={() => handleRiceCountChange(member.id, Math.min(9, (riceCounts[member.id] || 0) + 1))}
+                        disabled={!member.isActive || (riceCounts[member.id] || 0) >= 9}
+                        className="p-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors active:scale-95"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
                       <button
                         onClick={() => handleAddRice(member.id)}
                         disabled={!riceCounts[member.id] || !member.isActive}
-                        className="p-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95"
+                        className="ml-2 p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors active:scale-95"
+                        title="Confirm"
                       >
-                        <Plus className="w-5 h-5" />
+                        <Check className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
@@ -301,24 +311,29 @@ export const MembersList = ({
                       <Egg className="w-5 h-5 text-yellow-500" />
                       <span className="text-sm font-medium">Eggs: {member.eggCount}</span>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm font-bold w-4 text-center">{eggCounts[member.id] || 0}</span>
-                      <input
-                        type="range"
-                        min="0"
-                        max="9"
-                        step="1"
-                        value={eggCounts[member.id] || 0}
-                        onChange={(e) => handleEggCountChange(member.id, parseInt(e.target.value) || 0)}
-                        className="w-24 accent-primary cursor-pointer"
-                        disabled={!member.isActive}
-                      />
+                    <div className="flex items-center space-x-1">
+                      <button
+                        onClick={() => handleEggCountChange(member.id, Math.max(0, (eggCounts[member.id] || 0) - 1))}
+                        disabled={!member.isActive || (eggCounts[member.id] || 0) <= 0}
+                        className="p-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors active:scale-95"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </button>
+                      <span className="text-sm font-bold w-8 text-center">{eggCounts[member.id] || 0}</span>
+                      <button
+                        onClick={() => handleEggCountChange(member.id, Math.min(9, (eggCounts[member.id] || 0) + 1))}
+                        disabled={!member.isActive || (eggCounts[member.id] || 0) >= 9}
+                        className="p-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors active:scale-95"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
                       <button
                         onClick={() => handleAddEgg(member.id)}
                         disabled={!eggCounts[member.id] || !member.isActive}
-                        className="p-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors active:scale-95"
+                        className="ml-2 p-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors active:scale-95"
+                        title="Confirm"
                       >
-                        <Plus className="w-5 h-5" />
+                        <Check className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
