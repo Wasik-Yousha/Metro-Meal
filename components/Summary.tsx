@@ -74,7 +74,35 @@ export const Summary = ({
     const balanceText = `Group Balance: ${Math.abs(groupBalance).toFixed(2)} tk ${groupBalance >= 0 ? '(Surplus)' : '(Deficit)'}`
     doc.text(balanceText, 14, 73)
 
-    // Table Data
+    // Payments summary table (per member)
+    const paymentsTable = members.map((m) => [m.name, m.payments.toFixed(2)])
+    autoTable(doc, {
+      startY: 85,
+      head: [['Member', 'Paid (tk)']],
+      body: paymentsTable,
+      theme: 'grid',
+      headStyles: { fillColor: [79, 70, 229] },
+      styles: { fontSize: 9, cellPadding: 3 },
+      foot: [['', totalPayments.toFixed(2)]],
+      footStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' }
+    })
+
+    // Expenses table
+    const expensesTable = expenses.map((ex) => [ex.date || '', ex.description, ex.amount.toFixed(2)])
+    const afterPaymentsY = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 8 : 110
+    autoTable(doc, {
+      startY: afterPaymentsY,
+      head: [['Date', 'Description', 'Amount (tk)']],
+      body: expensesTable,
+      theme: 'grid',
+      headStyles: { fillColor: [79, 70, 229] },
+      styles: { fontSize: 9, cellPadding: 3 },
+      foot: [['', 'Total', totalExpenses.toFixed(2)]],
+      footStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' }
+    })
+
+    // Member detailed table (balances)
+    const afterExpensesY = (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 8 : (afterPaymentsY + 60)
     const tableData = members.map(member => {
       const mealCost = member.meals * mealRate
       const riceCost = member.riceCount * ricePrice
@@ -97,7 +125,7 @@ export const Summary = ({
     })
 
     autoTable(doc, {
-      startY: 85,
+      startY: afterExpensesY,
       head: [['Name', 'Meals', 'Rice', 'Eggs', 'Meal Cost', 'Extra', 'Total', 'Paid', 'Balance']],
       body: tableData,
       theme: 'grid',
@@ -107,6 +135,7 @@ export const Summary = ({
       footStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' }
     })
 
+    // Final save
     doc.save('metro-meal-summary.pdf')
   }
 
