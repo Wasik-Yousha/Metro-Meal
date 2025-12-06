@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Users, CreditCard, Receipt, PieChart, LayoutDashboard, Settings as SettingsIcon } from 'lucide-react'
+import { Users, CreditCard, Receipt, PieChart, LayoutDashboard } from 'lucide-react'
 import { MembersList } from './components/MembersList'
 import { PaymentTracker } from './components/PaymentTracker'
 import { ExpenseTracker } from './components/ExpenseTracker'
@@ -351,7 +351,7 @@ export function App() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300 pb-24">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
       <Header 
         isDarkMode={isDarkMode} 
         toggleTheme={toggleTheme} 
@@ -359,14 +359,14 @@ export function App() {
         setActiveTab={setActiveTab}
         tabs={tabs}
       />
-      <div className="container mx-auto px-4 py-6 max-w-6xl">
+      <div className="container mx-auto px-4 py-4 max-w-6xl pb-24 md:pb-6">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.2 }}
           >
             {activeTab === 'dashboard' && (
               <Dashboard
@@ -440,8 +440,8 @@ export function App() {
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 pb-safe z-50">
-        <div className="flex justify-around items-center px-2 py-3">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg border-t border-gray-200/50 dark:border-gray-800/50 pb-safe z-50">
+        <div className="flex justify-around items-center px-1 h-16">
           {tabs.map((tab) => {
             const Icon = tab.icon
             const isActive = activeTab === tab.id
@@ -449,21 +449,21 @@ export function App() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex flex-col items-center justify-center w-full space-y-1 transition-colors duration-200 ${
+                className={`flex flex-col items-center justify-center flex-1 h-full active:scale-95 transition-all duration-150 ${
                   isActive
                     ? 'text-primary'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
+                    : 'text-gray-400 dark:text-gray-500'
                 }`}
               >
-                <div className={`p-1.5 rounded-full transition-all duration-200 ${isActive ? 'bg-primary/10' : ''}`}>
-                  <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5px]' : 'stroke-2'}`} />
+                <div className={`p-1.5 rounded-xl transition-all duration-200 ${isActive ? 'bg-primary/10 scale-110' : ''}`}>
+                  <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5px]' : 'stroke-[1.5px]'}`} />
                 </div>
-                <span className="text-[10px] font-medium">{tab.label}</span>
+                <span className={`text-[10px] mt-0.5 transition-all ${isActive ? 'font-semibold' : 'font-medium'}`}>{tab.label}</span>
               </button>
             )
           })}
         </div>
-      </div>
+      </nav>
     </div>
   )
 }

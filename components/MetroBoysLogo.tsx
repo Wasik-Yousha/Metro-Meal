@@ -1,4 +1,4 @@
-import React from 'react'
+
 
 export const MetroBoysLogo = ({ className }: { className?: string }) => (
   <svg

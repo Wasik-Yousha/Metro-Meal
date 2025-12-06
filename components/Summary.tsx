@@ -1,4 +1,3 @@
-import React from 'react'
 import { Member, Expense } from '../App'
 import { Calculator, TrendingUp, TrendingDown, AlertCircle, Utensils, Egg, Download } from 'lucide-react'
 import { motion } from 'framer-motion'
@@ -140,148 +139,179 @@ export const Summary = ({
   }
 
   return (
-    <div className="space-y-6">
-      <div className="glass-panel rounded-xl p-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-500 to-indigo-600 bg-clip-text text-transparent">
-            Monthly Summary
-          </h2>
-          <button
-            onClick={generatePDF}
-            className="flex items-center justify-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors text-sm font-medium shadow-sm"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Download Report
-          </button>
-        </div>
-
-        {/* Key Metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-muted-foreground">Total Meals</h3>
-              <Utensils className="w-4 h-4 text-orange-500" />
-            </div>
-            <p className="text-2xl font-bold">{totalMeals}</p>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-muted-foreground">Total Payments</h3>
-              <TakaSign className="w-4 h-4 text-green-500" />
-            </div>
-            <p className="text-2xl font-bold text-green-600 dark:text-green-400">{totalPayments.toFixed(2)} tk</p>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white dark:bg-gray-800 p-5 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-muted-foreground">Total Expenses</h3>
-              <TrendingDown className="w-4 h-4 text-red-500" />
-            </div>
-            <p className="text-2xl font-bold text-red-600 dark:text-red-400">{totalExpenses.toFixed(2)} tk</p>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className={`p-5 rounded-xl shadow-sm border ${
-              groupBalance >= 0 
-                ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800' 
-                : 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800'
-            }`}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium opacity-80">Group Balance</h3>
-              {groupBalance >= 0 ? (
-                <TrendingUp className="w-4 h-4 text-green-600 dark:text-green-400" />
-              ) : (
-                <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
-              )}
-            </div>
-            <p className={`text-2xl font-bold ${groupBalance >= 0 ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
-              {Math.abs(groupBalance).toFixed(2)} tk
-              <span className="text-xs font-normal ml-1 opacity-75">
-                {groupBalance >= 0 ? '(surplus)' : '(deficit)'}
-              </span>
-            </p>
-          </motion.div>
-        </div>
-
-        {/* Cost Breakdown */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-700">
-            <div className="flex items-center space-x-2 mb-2">
-              <div className="w-2 h-2 rounded-full bg-gray-400" />
-              <h3 className="font-medium text-sm">Rice Cost</h3>
-            </div>
-            <p className="text-lg font-semibold">
-              {totalRice} × {ricePrice} = {totalRiceCost} tk
-            </p>
-          </div>
-          <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-700">
-            <div className="flex items-center space-x-2 mb-2">
-              <Egg className="w-3 h-3 text-yellow-500" />
-              <h3 className="font-medium text-sm">Egg Cost</h3>
-            </div>
-            <p className="text-lg font-semibold">
-              {totalEggs} × {eggPrice} = {totalEggCost} tk
-            </p>
-          </div>
-          <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-700">
-            <div className="flex items-center space-x-2 mb-2">
-              <Calculator className="w-3 h-3 text-blue-500" />
-              <h3 className="font-medium text-sm">Base Expenses</h3>
-            </div>
-            <p className="text-lg font-semibold">
-              {(totalExpenses - totalRiceCost - totalEggCost).toFixed(2)} tk
-            </p>
-          </div>
-        </div>
-
-        {/* Meal Rate Card */}
-        <motion.div 
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mb-8 p-6 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl text-white shadow-lg"
+    <div className="space-y-4 pb-safe">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold bg-gradient-to-r from-purple-500 to-indigo-600 bg-clip-text text-transparent">
+          Summary
+        </h2>
+        <button
+          onClick={generatePDF}
+          className="flex items-center justify-center px-3 py-2 bg-indigo-600 text-white rounded-xl transition-all text-sm font-medium shadow-sm active:scale-95"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-medium opacity-90 mb-1">Current Meal Rate</h3>
-              <p className="text-sm opacity-75">
-                Excludes individual rice & egg costs
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-4xl font-bold">
-                {mealRate.toFixed(2)} <span className="text-lg font-normal opacity-75">tk</span>
-              </p>
-            </div>
+          <Download className="w-4 h-4 mr-1.5" />
+          Export
+        </button>
+      </div>
+
+      {/* Key Metrics - Stacked on mobile, grid on desktop */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
+        >
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="text-xs font-medium text-muted-foreground">Meals</h3>
+            <Utensils className="w-3.5 h-3.5 text-orange-500" />
           </div>
+          <p className="text-xl font-bold">{totalMeals}</p>
         </motion.div>
 
-        {/* Member Balances Table */}
-        <h3 className="font-semibold text-lg mb-4 flex items-center">
-          <Calculator className="w-5 h-5 mr-2 text-primary" />
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
+        >
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="text-xs font-medium text-muted-foreground">Payments</h3>
+            <TakaSign className="w-3.5 h-3.5 text-green-500" />
+          </div>
+          <p className="text-xl font-bold text-green-600 dark:text-green-400">{totalPayments.toFixed(0)} tk</p>
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700"
+        >
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="text-xs font-medium text-muted-foreground">Expenses</h3>
+            <TrendingDown className="w-3.5 h-3.5 text-red-500" />
+          </div>
+          <p className="text-xl font-bold text-red-600 dark:text-red-400">{totalExpenses.toFixed(0)} tk</p>
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className={`p-4 rounded-2xl shadow-sm border ${
+            groupBalance >= 0 
+              ? 'bg-green-50 dark:bg-green-900/20 border-green-100 dark:border-green-800' 
+              : 'bg-red-50 dark:bg-red-900/20 border-red-100 dark:border-red-800'
+          }`}
+        >
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="text-xs font-medium opacity-80">Balance</h3>
+            {groupBalance >= 0 ? (
+              <TrendingUp className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
+            ) : (
+              <AlertCircle className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
+            )}
+          </div>
+          <p className={`text-xl font-bold ${groupBalance >= 0 ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
+            {Math.abs(groupBalance).toFixed(0)} tk
+          </p>
+        </motion.div>
+      </div>
+
+      {/* Cost Breakdown */}
+      <div className="grid grid-cols-3 gap-2">
+        <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-xl border border-gray-100 dark:border-gray-700">
+          <div className="flex items-center space-x-1.5 mb-1">
+            <div className="w-2 h-2 rounded-full bg-gray-400" />
+            <h3 className="font-medium text-xs">Rice</h3>
+          </div>
+          <p className="text-sm font-semibold">{totalRiceCost} tk</p>
+        </div>
+        <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-xl border border-gray-100 dark:border-gray-700">
+          <div className="flex items-center space-x-1.5 mb-1">
+            <Egg className="w-3 h-3 text-yellow-500" />
+            <h3 className="font-medium text-xs">Eggs</h3>
+          </div>
+          <p className="text-sm font-semibold">{totalEggCost} tk</p>
+        </div>
+        <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-xl border border-gray-100 dark:border-gray-700">
+          <div className="flex items-center space-x-1.5 mb-1">
+            <Calculator className="w-3 h-3 text-blue-500" />
+            <h3 className="font-medium text-xs">Base</h3>
+          </div>
+          <p className="text-sm font-semibold">{(totalExpenses - totalRiceCost - totalEggCost).toFixed(0)} tk</p>
+        </div>
+      </div>
+
+      {/* Meal Rate Card */}
+      <motion.div 
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="p-4 bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl text-white shadow-lg"
+      >
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-sm font-medium opacity-90">Meal Rate</h3>
+            <p className="text-xs opacity-75">Excludes rice & egg</p>
+          </div>
+          <p className="text-3xl font-bold">
+            {mealRate.toFixed(2)} <span className="text-sm font-normal opacity-75">tk</span>
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Member Balances - Mobile Cards */}
+      <div>
+        <h3 className="font-semibold text-sm mb-3 flex items-center">
+          <Calculator className="w-4 h-4 mr-2 text-primary" />
           Member Balances
         </h3>
-        <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+        
+        {/* Mobile: Cards view */}
+        <div className="md:hidden space-y-2">
+          {members.map((member) => {
+            const mealCost = member.meals * mealRate
+            const riceCost = member.riceCount * ricePrice
+            const eggCost = member.eggCount * eggPrice
+            const extraCost = riceCost + eggCost
+            const totalCost = mealCost + extraCost
+            const balance = member.payments - totalCost
+            return (
+              <div key={member.id} className="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <h4 className="font-semibold">{member.name}</h4>
+                    <p className="text-xs text-muted-foreground">
+                      {member.meals} meals • {member.riceCount} rice • {member.eggCount} eggs
+                    </p>
+                  </div>
+                  <span className={`text-lg font-bold ${balance >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                    {Math.abs(balance).toFixed(0)} {balance >= 0 ? 'Cr' : 'Dr'}
+                  </span>
+                </div>
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div className="bg-gray-50 dark:bg-gray-900/50 p-2 rounded-lg text-center">
+                    <p className="text-muted-foreground">Cost</p>
+                    <p className="font-semibold">{totalCost.toFixed(0)} tk</p>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-900/50 p-2 rounded-lg text-center">
+                    <p className="text-muted-foreground">Paid</p>
+                    <p className="font-semibold text-green-600">{member.payments.toFixed(0)} tk</p>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-900/50 p-2 rounded-lg text-center">
+                    <p className="text-muted-foreground">Extra</p>
+                    <p className="font-semibold">{extraCost.toFixed(0)} tk</p>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Desktop: Table view */}
+        <div className="hidden md:block overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
