@@ -80,7 +80,6 @@ export const ExpenseTracker = ({
               onChange={(e) => setDescription(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:ring-2 focus:ring-red-500 outline-none transition-all"
               placeholder="What did you buy?"
-              required
             />
           </div>
           
@@ -89,19 +88,20 @@ export const ExpenseTracker = ({
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-medium">৳</span>
               <input
                 type="number"
-                min="0.01"
-                inputMode="decimal"
+                min="1"
+                step="1"
+                inputMode="numeric"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 className="w-full pl-8 pr-4 py-3 bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:ring-2 focus:ring-red-500 outline-none transition-all"
                 placeholder="Amount"
-                required
               />
             </div>
 
             <button
               type="submit"
-              className="h-12 px-5 bg-red-600 text-white rounded-xl transition-all flex items-center justify-center font-medium shadow-sm active:scale-95"
+              disabled={!description.trim() || !amount}
+              className="h-12 px-5 bg-red-600 text-white rounded-xl transition-all flex items-center justify-center font-medium shadow-sm active:scale-95 disabled:opacity-50 disabled:active:scale-100"
             >
               <Plus className="w-5 h-5 mr-1" />
               Add
