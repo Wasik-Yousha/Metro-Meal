@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Users, CreditCard, Receipt, PieChart, LayoutDashboard } from 'lucide-react'
+import { Users, CreditCard, Receipt, PieChart, LayoutDashboard, BarChart3 } from 'lucide-react'
 import { MembersList } from './components/MembersList'
 import { PaymentTracker } from './components/PaymentTracker'
 import { ExpenseTracker } from './components/ExpenseTracker'
@@ -8,6 +8,7 @@ import { Summary } from './components/Summary'
 import { Dashboard } from './components/Dashboard'
 import { Header } from './components/Header'
 import { Settings } from './components/Settings'
+import { Analytics, DailyRecord } from './components/Analytics'
 
 export interface Member {
   id: number
@@ -94,6 +95,11 @@ export function App() {
     return savedExpenses ? JSON.parse(savedExpenses) : []
   })
 
+  const [dailyRecords, setDailyRecords] = useState<DailyRecord[]>(() => {
+    const saved = localStorage.getItem('dailyRecords')
+    return saved ? JSON.parse(saved) : []
+  })
+
   const [ricePrice, setRicePrice] = useState<number>(() => {
     const saved = localStorage.getItem('ricePrice')
     return saved ? parseFloat(saved) : 20
@@ -121,14 +127,18 @@ export function App() {
     localStorage.setItem('eggPrice', eggPrice.toString())
   }, [eggPrice])
 
+  useEffect(() => {
+    localStorage.setItem('dailyRecords', JSON.stringify(dailyRecords))
+  }, [dailyRecords])
+
   const [activeTab, setActiveTab] = useState<
-    'dashboard' | 'members' | 'payments' | 'expenses' | 'summary' | 'settings'
+    'dashboard' | 'members' | 'payments' | 'expenses' | 'summary' | 'analytics' | 'settings'
   >('dashboard')
 
-  // Calculate total meals, payments, and expenses
-  const totalMeals = members.reduce((sum: number, member: Member) => sum + (member.isActive ? member.meals : 0), 0)
-  const totalRice = members.reduce((sum: number, member: Member) => sum + (member.isActive ? member.riceCount : 0), 0)
-  const totalEggs = members.reduce((sum: number, member: Member) => sum + (member.isActive ? member.eggCount : 0), 0)
+  // Calculate total meals, payments, and expenses (count ALL members, not just active)
+  const totalMeals = members.reduce((sum: number, member: Member) => sum + member.meals, 0)
+  const totalRice = members.reduce((sum: number, member: Member) => sum + member.riceCount, 0)
+  const totalEggs = members.reduce((sum: number, member: Member) => sum + member.eggCount, 0)
   const totalPayments = members.reduce(
     (sum: number, member: Member) => sum + member.payments,
     0,
@@ -148,6 +158,32 @@ export function App() {
 
   // Handle adding meals to a member
   const handleAddMeal = (memberId: number, mealCount: number) => {
+    if (mealCount > 0) {
+      // Update daily record
+      const today = new Date().toISOString().split('T')[0]
+      setDailyRecords((prev) => {
+        const existingRecord = prev.find(r => r.date === today)
+        if (existingRecord) {
+          return prev.map(r => r.date === today ? {
+            ...r,
+            memberMeals: {
+              ...r.memberMeals,
+              [memberId]: {
+                meals: (r.memberMeals[memberId]?.meals || 0) + mealCount,
+                rice: r.memberMeals[memberId]?.rice || 0,
+                eggs: r.memberMeals[memberId]?.eggs || 0
+              }
+            }
+          } : r)
+        } else {
+          return [...prev, {
+            date: today,
+            memberMeals: { [memberId]: { meals: mealCount, rice: 0, eggs: 0 } }
+          }]
+        }
+      })
+    }
+    
     setMembers((prevMembers) =>
       prevMembers.map((member) =>
         member.id === memberId
@@ -162,6 +198,31 @@ export function App() {
 
   // Handle adding rice to a member
   const handleAddRice = (memberId: number, count: number) => {
+    if (count > 0) {
+      const today = new Date().toISOString().split('T')[0]
+      setDailyRecords((prev) => {
+        const existingRecord = prev.find(r => r.date === today)
+        if (existingRecord) {
+          return prev.map(r => r.date === today ? {
+            ...r,
+            memberMeals: {
+              ...r.memberMeals,
+              [memberId]: {
+                meals: r.memberMeals[memberId]?.meals || 0,
+                rice: (r.memberMeals[memberId]?.rice || 0) + count,
+                eggs: r.memberMeals[memberId]?.eggs || 0
+              }
+            }
+          } : r)
+        } else {
+          return [...prev, {
+            date: today,
+            memberMeals: { [memberId]: { meals: 0, rice: count, eggs: 0 } }
+          }]
+        }
+      })
+    }
+    
     setMembers((prevMembers) =>
       prevMembers.map((member) =>
         member.id === memberId
@@ -176,6 +237,31 @@ export function App() {
 
   // Handle adding eggs to a member
   const handleAddEgg = (memberId: number, count: number) => {
+    if (count > 0) {
+      const today = new Date().toISOString().split('T')[0]
+      setDailyRecords((prev) => {
+        const existingRecord = prev.find(r => r.date === today)
+        if (existingRecord) {
+          return prev.map(r => r.date === today ? {
+            ...r,
+            memberMeals: {
+              ...r.memberMeals,
+              [memberId]: {
+                meals: r.memberMeals[memberId]?.meals || 0,
+                rice: r.memberMeals[memberId]?.rice || 0,
+                eggs: (r.memberMeals[memberId]?.eggs || 0) + count
+              }
+            }
+          } : r)
+        } else {
+          return [...prev, {
+            date: today,
+            memberMeals: { [memberId]: { meals: 0, rice: 0, eggs: count } }
+          }]
+        }
+      })
+    }
+    
     setMembers((prevMembers) =>
       prevMembers.map((member) =>
         member.id === memberId
@@ -347,6 +433,7 @@ export function App() {
     { id: 'members', label: 'Meals', icon: Users },
     { id: 'payments', label: 'Payments', icon: CreditCard },
     { id: 'expenses', label: 'Expenses', icon: Receipt },
+    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'summary', label: 'Summary', icon: PieChart },
   ]
 
@@ -410,6 +497,12 @@ export function App() {
                 onAddExpense={handleAddExpense} 
                 onUpdateExpense={handleUpdateExpense}
                 onDeleteExpense={handleDeleteExpense}
+              />
+            )}
+            {activeTab === 'analytics' && (
+              <Analytics
+                members={members}
+                dailyRecords={dailyRecords}
               />
             )}
             {activeTab === 'summary' && (
